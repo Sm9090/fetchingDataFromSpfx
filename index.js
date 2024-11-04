@@ -31,7 +31,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     if (!response.ok && response.status === 404) {
       console.log("List not found, creating it...");
 
-      response = await fetch(`${webUrl}/_api/web/lists`, {
+      response = await fetch(`${webUrl}/sites/Communication%20Site/_api/web/lists`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json;odata=verbose',
@@ -103,7 +103,7 @@ console.log("2")
     console.log("4")
     console.log("User detail added successfully.");
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("something went wrong");
   }
 }
 
