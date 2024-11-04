@@ -82,7 +82,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       // Step 4: Create columns in the list
       const columns = ['Email', 'UserID', 'Username', 'AddedOn'];
       for (const column of columns) {
-        await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
+        const columnResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
           method: "POST",
           headers: {
             "Accept": "application/json;odata=verbose",
@@ -90,14 +90,22 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
             "X-RequestDigest": requestDigestValue
           },
           body: JSON.stringify({
-            // '__metadata': { 'type': 'SP.Field' },
+            '__metadata': { 'type': 'SP.Field' },
             'Title': column,
             'FieldTypeKind': 2, // Single line of text
             'Required': false
           }),
           credentials: "same-origin"
         });
+      
+        const columnResult = await columnResponse.json();
+        console.log(`Column ${column} creation response:`, columnResult);
+      
+        if (!columnResponse.ok) {
+          console.error(`Failed to create column ${column}:`, columnResult.error.message);
+        }
       }
+      // console.log(response ,"response")
       console.log("Columns created successfully.");
     } else {
       console.log("List exists.");
