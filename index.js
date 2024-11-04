@@ -64,7 +64,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
           "X-RequestDigest": requestDigestValue
         },
         body: JSON.stringify({
-          '__metadata': { 'type': 'SP.List' },
+          // '__metadata': { 'type': 'SP.List' },
           'Title': listName,
           'BaseTemplate': 100 // Custom list type
         }),
@@ -74,6 +74,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       if (!response.ok) {
         throw new Error("Error creating list: " + response.statusText);
       }
+      console.log(response , "response")
 
       console.log("List created successfully.");
 
@@ -88,7 +89,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
             "X-RequestDigest": requestDigestValue
           },
           body: JSON.stringify({
-            '__metadata': { 'type': 'SP.Field' },
+            // '__metadata': { 'type': 'SP.Field' },
             'Title': column,
             'FieldTypeKind': 2, // Single line of text
             'Required': false
