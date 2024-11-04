@@ -1,6 +1,5 @@
 console.log("Hello from jsCdn and fetching user detail");
 
-// Function to get the form digest value for CSRF protection
 async function getRequestDigest(webUrl) {
   try {
     const response = await fetch(`${webUrl}/_api/contextinfo`, {
@@ -20,13 +19,9 @@ async function getRequestDigest(webUrl) {
   }
 }
 
-// Main function to create or update a list and add user details
 async function createOrUpdateListAndAddItem(webUrl, listName) {
   try {
-    // Step 1: Get the request digest value
     const requestDigestValue = await getRequestDigest(webUrl);
-
-    // Step 2: Fetch current user details
     const userResponse = await fetch(`${webUrl}/_api/web/currentUser`, {
       method: "GET",
       headers: {
@@ -44,7 +39,6 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
 
     console.log(user, 'User details fetched');
 
-    // Step 3: Check if the list exists
     let response = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, {
       method: "GET",
       headers: {
@@ -65,9 +59,8 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
           "X-RequestDigest": requestDigestValue
         },
         body: JSON.stringify({
-          // '__metadata': { 'type': 'SP.List' },
           'Title': listName,
-          'BaseTemplate': 100 // Custom list type
+          'BaseTemplate': 100 
         }),
         credentials: "same-origin"
       });
@@ -78,13 +71,11 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       console.log(response , "response")
 
       console.log("List created successfully.");
-
-      // Step 4: Create columns in the list
       const columns = [
-        { Title: 'Email', FieldTypeKind: 2 },    // Single line of text
-        { Title: 'UserID', FieldTypeKind: 2 },   // Single line of text (adjust type if needed)
-        { Title: 'Username', FieldTypeKind: 2 }, // Single line of text
-        { Title: 'AddedOn', FieldTypeKind: 4 }   // DateTime
+        { Title: 'Email', FieldTypeKind: 2 },    
+        { Title: 'UserID', FieldTypeKind: 2 },    
+        { Title: 'Username', FieldTypeKind: 2 }, 
+        { Title: 'AddedOn', FieldTypeKind: 4 }  
       ];
       for (const column of columns) {
         const columnResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
@@ -105,13 +96,11 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
           console.error(`Failed to create column ${column}:`, columnResult.error.message);
         }
       }
-      // console.log(response ,"response")
       console.log("Columns created successfully.");
     } else {
       console.log("List exists.");
     }
 
-    // Step 5: Add an item with user details
     const addItemResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, {
       method: "POST",
       headers: {
@@ -120,7 +109,6 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
         "X-RequestDigest": requestDigestValue
       },
       body: JSON.stringify({
-        // '__metadata': { 'type': 'SP.Data.UserListItem' },
         'Title': user.Title,
         'Email': user.Email,
         'UserID': user.Id.toString(),
@@ -140,5 +128,4 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
   }
 }
 
-// Expose the function to the global window object
 window.createOrUpdateListAndAddItem = createOrUpdateListAndAddItem;
