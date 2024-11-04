@@ -56,7 +56,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     if (response.status === 404) {
       console.log("List not found, creating it...");
 
-      response = await fetch(`${webUrl}/sites/Communication%20Site/_api/web/lists`, {
+      response = await fetch(`${webUrl}/sites/Communication-Site/_api/web/lists`, {
         method: "POST",
         headers: {
           "Accept": "application/json;odata=verbose",
