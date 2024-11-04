@@ -53,10 +53,11 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       credentials: "same-origin"
     });
 
+    console.log(webUrl ," weburl")
     if (response.status === 404) {
       console.log("List not found, creating it...");
 
-      response = await fetch(`${webUrl}/sites/Communication-site/_api/web/lists`, {
+      response = await fetch(`${webUrl}/_api/web/lists`, {
         method: "POST",
         headers: {
           "Accept": "application/json;odata=verbose",
@@ -81,7 +82,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       // Step 4: Create columns in the list
       const columns = ['Email', 'UserID', 'Username', 'AddedOn'];
       for (const column of columns) {
-        await fetch(`${webUrl}/sites/Communication-site/_api/web/lists/getbytitle('${listName}')/Fields`, {
+        await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
           method: "POST",
           headers: {
             "Accept": "application/json;odata=verbose",
