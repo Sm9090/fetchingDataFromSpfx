@@ -80,7 +80,12 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       console.log("List created successfully.");
 
       // Step 4: Create columns in the list
-      const columns = ['Email', 'UserID', 'Username', 'AddedOn'];
+      const columns = [
+        { Title: 'Email', FieldTypeKind: 2 },    // Single line of text
+        { Title: 'UserID', FieldTypeKind: 2 },   // Single line of text (adjust type if needed)
+        { Title: 'Username', FieldTypeKind: 2 }, // Single line of text
+        { Title: 'AddedOn', FieldTypeKind: 4 }   // DateTime
+      ];
       for (const column of columns) {
         const columnResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
           method: "POST",
@@ -89,12 +94,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
             "Content-Type": "application/json",
             "X-RequestDigest": requestDigestValue
           },
-          body: JSON.stringify({
-            // '__metadata': { 'type': 'SP.Field' },
-            'Title': column,
-            'FieldTypeKind': 2, // Single line of text
-            'Required': false
-          }),
+          body: JSON.stringify(column),
           credentials: "same-origin"
         });
       
@@ -123,7 +123,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
         // '__metadata': { 'type': 'SP.Data.UserListItem' },
         'Title': user.Title,
         'Email': user.Email,
-        'UserID': user.Id,
+        'UserID': user.Id.toString(),
         'Username': user.LoginName,
         'AddedOn': new Date().toISOString()
       }),
