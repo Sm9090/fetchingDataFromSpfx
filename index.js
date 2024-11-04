@@ -30,13 +30,14 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     // If the list doesn't exist, create it
     if (!response.ok && response.status === 404) {
       console.log("List not found, creating it...");
-
+      const requestDigestValue = document.getElementById("__REQUESTDIGEST")?.value
+      console.log(requestDigestValue , "requestDigestValue")
       response = await fetch(`${webUrl}/sites/Communication%20Site/_api/web/lists`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json;odata=verbose',
           'Content-Type': 'application/json',
-          'X-RequestDigest': document.getElementById("__REQUESTDIGEST").value
+          'X-RequestDigest': requestDigestValue
         },
         body: JSON.stringify({
           '__metadata': { 'type': 'SP.List' },
