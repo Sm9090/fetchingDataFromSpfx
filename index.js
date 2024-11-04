@@ -44,6 +44,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
           'BaseTemplate': 100 // Custom list type
         })
       });
+      console.log("1")
 
       if (!response.ok) {
         throw new Error("Error creating list: " + response.statusText);
@@ -75,7 +76,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     } else {
       console.log("List exists.");
     }
-
+console.log("2")
     // Step 4: Add an item with user details
     const addItemResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, {
       method: 'POST',
@@ -94,13 +95,15 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
       })
     });
 
+    console.log("3")
     if (!addItemResponse.ok) {
       throw new Error("Error adding item: " + addItemResponse.statusText);
     }
 
+    console.log("4")
     console.log("User detail added successfully.");
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error:", error.message);
   }
 }
 
