@@ -1,15 +1,10 @@
 console.log("Hello from jsCdn and fetching user detail");
 
-async function createOrUpdateListAndAddItem(webUrl, listName) {
+async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
   try {
     // Step 1: Fetch current user details
-    const userResponse = await fetch(`${webUrl}/_api/web/currentUser`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json;odata=verbose",
-      },
-    });
-
+    const userResponse = await spHttpClient.get(`${webUrl}/_api/web/currentUser`, SPHttpClient.configurations.v1);
+    
     if (!userResponse.ok) {
       throw new Error("Error fetching user details: " + userResponse.statusText);
     }
@@ -20,24 +15,16 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     console.log(user, 'user');
 
     // Step 2: Check if the list exists
-    let response = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json;odata=verbose'
-      }
-    });
+    let response = await spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, SPHttpClient.configurations.v1);
 
     // If the list doesn't exist, create it
-    if (!response.ok && response.status === 404) {
+    if (response.status === 404) {
       console.log("List not found, creating it...");
-      const requestDigestValue = document.getElementById("__REQUESTDIGEST")
-      console.log(requestDigestValue , "requestDigestValue")
-      response = await fetch(`${webUrl}/sites/Communication%20Site/_api/web/lists`, {
-        method: 'POST',
+
+      response = await spHttpClient.post(`${webUrl}/_api/web/lists`, SPHttpClient.configurations.v1, {
         headers: {
           'Accept': 'application/json;odata=verbose',
-          'Content-Type': 'application/json',
-          'X-RequestDigest': document.getElementById("__REQUESTDIGEST").value
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           '__metadata': { 'type': 'SP.List' },
@@ -45,25 +32,20 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
           'BaseTemplate': 100 // Custom list type
         })
       });
-      console.log("1")
 
       if (!response.ok) {
         throw new Error("Error creating list: " + response.statusText);
       }
-
-      console.log(response , 'response')
 
       console.log("List created successfully.");
 
       // Step 3: Create columns in the list
       const columns = ['Email', 'UserID', 'Username', 'AddedOn'];
       for (const column of columns) {
-        await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
-          method: 'POST',
+        await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, SPHttpClient.configurations.v1, {
           headers: {
             'Accept': 'application/json;odata=verbose',
-            'Content-Type': 'application/json',
-            'X-RequestDigest': document.getElementById("__REQUESTDIGEST").value
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             '__metadata': { 'type': 'SP.Field' },
@@ -77,18 +59,16 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
     } else {
       console.log("List exists.");
     }
-console.log("2")
+
     // Step 4: Add an item with user details
-    const addItemResponse = await fetch(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, {
-      method: 'POST',
+    const addItemResponse = await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, SPHttpClient.configurations.v1, {
       headers: {
         'Accept': 'application/json;odata=verbose',
-        'Content-Type': 'application/json',
-        'X-RequestDigest': document.getElementById("__REQUESTDIGEST").value
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         '__metadata': { 'type': 'SP.Data.UserListItem' },
-        'Title': user.Title, // Using the user name as the Title
+        'Title': user.Title,
         'Email': user.Email,
         'UserID': user.Id,
         'Username': user.LoginName,
@@ -96,15 +76,13 @@ console.log("2")
       })
     });
 
-    console.log("3")
     if (!addItemResponse.ok) {
       throw new Error("Error adding item: " + addItemResponse.statusText);
     }
 
-    console.log("4")
     console.log("User detail added successfully.");
   } catch (error) {
-    console.error("something went wrong");
+    console.error("Something went wrong:", error);
   }
 }
 
