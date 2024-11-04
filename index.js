@@ -5,7 +5,9 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     // Step 1: Fetch current user details
     const userResponse = await spHttpClient.get(`${webUrl}/_api/web/currentUser`, {
       headers: {
-        'Accept': 'application/json;odata=verbose'
+        'Accept': 'application/json;odata=verbose',
+        'Content-Type': 'application/json'
+
       }
     });
 
@@ -21,7 +23,8 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     // Step 2: Check if the list exists
     let response = await spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, {
       headers: {
-        'Accept': 'application/json;odata=verbose'
+        'Accept': 'application/json;odata=verbose',
+        'Content-Type': 'application/json'
       }
     });
 
