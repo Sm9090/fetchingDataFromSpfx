@@ -6,7 +6,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     const userResponse = await spHttpClient.get(`${webUrl}/_api/web/currentUser`, {
       headers: {
         'Accept': 'application/json;odata=verbose',
-        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/json'
 
       }
     });
@@ -15,7 +15,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
       throw new Error("Error fetching user details: " + userResponse.statusText);
     }
 
-    const userData = await userResponse.json();
+    const userData = await userResponse.text();
     const user = userData.d;
 
     console.log(user, 'user');
@@ -24,7 +24,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     let response = await spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, {
       headers: {
         'Accept': 'application/json;odata=verbose',
-        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/json'
       }
     });
 
