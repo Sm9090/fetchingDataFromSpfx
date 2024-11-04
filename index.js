@@ -90,7 +90,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
             "X-RequestDigest": requestDigestValue
           },
           body: JSON.stringify({
-            '__metadata': { 'type': 'SP.Field' },
+            // '__metadata': { 'type': 'SP.Field' },
             'Title': column,
             'FieldTypeKind': 2, // Single line of text
             'Required': false
