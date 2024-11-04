@@ -3,8 +3,12 @@ console.log("Hello from jsCdn and fetching user detail");
 async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
   try {
     // Step 1: Fetch current user details
-    const userResponse = await spHttpClient.get(`${webUrl}/_api/web/currentUser`, SPHttpClient.configurations.v1);
-    
+    const userResponse = await spHttpClient.get(`${webUrl}/_api/web/currentUser`, {
+      headers: {
+        'Accept': 'application/json;odata=verbose'
+      }
+    });
+
     if (!userResponse.ok) {
       throw new Error("Error fetching user details: " + userResponse.statusText);
     }
@@ -15,13 +19,17 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     console.log(user, 'user');
 
     // Step 2: Check if the list exists
-    let response = await spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, SPHttpClient.configurations.v1);
+    let response = await spHttpClient.get(`${webUrl}/_api/web/lists/getbytitle('${listName}')`, {
+      headers: {
+        'Accept': 'application/json;odata=verbose'
+      }
+    });
 
     // If the list doesn't exist, create it
     if (response.status === 404) {
       console.log("List not found, creating it...");
 
-      response = await spHttpClient.post(`${webUrl}/_api/web/lists`, SPHttpClient.configurations.v1, {
+      response = await spHttpClient.post(`${webUrl}/_api/web/lists`, {
         headers: {
           'Accept': 'application/json;odata=verbose',
           'Content-Type': 'application/json'
@@ -42,7 +50,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
       // Step 3: Create columns in the list
       const columns = ['Email', 'UserID', 'Username', 'AddedOn'];
       for (const column of columns) {
-        await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, SPHttpClient.configurations.v1, {
+        await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/Fields`, {
           headers: {
             'Accept': 'application/json;odata=verbose',
             'Content-Type': 'application/json'
@@ -61,7 +69,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
     }
 
     // Step 4: Add an item with user details
-    const addItemResponse = await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, SPHttpClient.configurations.v1, {
+    const addItemResponse = await spHttpClient.post(`${webUrl}/_api/web/lists/getbytitle('${listName}')/items`, {
       headers: {
         'Accept': 'application/json;odata=verbose',
         'Content-Type': 'application/json'
@@ -86,4 +94,4 @@ async function createOrUpdateListAndAddItem(webUrl, listName, spHttpClient) {
   }
 }
 
-window.createOrUpdateListAndAddItem = createOrUpdateListAndAddItem;
+window.createOrUpdateListAndAddItem = createOrUpdateListAndAddItem;  
