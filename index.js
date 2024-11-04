@@ -120,7 +120,7 @@ async function createOrUpdateListAndAddItem(webUrl, listName) {
         "X-RequestDigest": requestDigestValue
       },
       body: JSON.stringify({
-        '__metadata': { 'type': 'SP.Data.UserListItem' },
+        // '__metadata': { 'type': 'SP.Data.UserListItem' },
         'Title': user.Title,
         'Email': user.Email,
         'UserID': user.Id,
